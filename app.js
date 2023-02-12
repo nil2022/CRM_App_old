@@ -6,6 +6,8 @@ const User = require("./models/user.model")
 const app = express();
 const bcrypt = require('bcryptjs')
 const constants = require('./utils/constants')
+const path = require('path');
+
 async function init() {
     let user = await User.findOne({ userId: "nil_2410" })
 
@@ -45,6 +47,10 @@ require('./routes/auth.routes')(app)
 require('./routes/user.routes')(app)
 require('./routes/ticket.routes')(app)
 
-app.get("/", (req, res) => res.status(200).send("Hitting the GET API"))
+//require("./node-cron/routes/ticketNotification.route")(app)   //Ticket Notification Routes
+
+app.get('/', (req, res) => {
+    res.status(200).sendFile(path.join(__dirname, 'index.html'));
+  });
 
 app.listen(3000, () => console.log("Listening at http://localhost:3000"))
