@@ -18,7 +18,8 @@ let mailOptions = {
   from: 'nil.haldar@gmail.com',
   to: 'nil.2023@yopmail.com',
   subject: 'Hello! from Node JS, Your Passkey',
-  text: `This is your Passkey : ${generatedPasskey}`
+  html: `<h4>This is your Passkey :</h4> 
+        <h3>${generatedPasskey}</h3> `
 };
 
 // send the email

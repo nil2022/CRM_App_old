@@ -1,13 +1,14 @@
 const dbConfig = require("./configs/db.config")
 const mongoose = require("mongoose")
-const authController = require("./controllers/auth.controller")
 const express = require('express')
 const User = require("./models/user.model")
 const app = express();
 const bcrypt = require('bcryptjs')
 const constants = require('./utils/constants')
 const path = require('path');
+const serverConfig = require('./configs/server.config')
 
+const PORT = serverConfig.serverPort;
 async function init() {
     let user = await User.findOne({ userId: "nil_2410" })
 
@@ -40,17 +41,22 @@ const db = mongoose.connection
 db.on("error", () => console.log("Can't connect to DB"))
 db.once("open", () => {
     console.log("Connected to Mongo DB")
+    console.log("\n");
     init()
+    if(dbConfig.DB_URL === "mongodb://localhost:27017/crm_db") { 
+        console.log("CONNECTED TO LOCAL SERVER"); 
+    }
+        else console.log("Connected to MongoDB Atlas!");
+        console.log("\n");
+    
 })
 
 require('./routes/auth.routes')(app)
 require('./routes/user.routes')(app)
 require('./routes/ticket.routes')(app)
 
-//require("./node-cron/routes/ticketNotification.route")(app)   //Ticket Notification Routes
-
 app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, 'index.html'));
   });
-
-app.listen(3000, () => console.log("Listening at http://localhost:3000"))
+ 
+app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`))
