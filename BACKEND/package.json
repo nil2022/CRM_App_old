@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --testEnvironment=node --runInBand --detectOpenHandles --coverage ./tests",
     "build": "npm install bcryptjs body-parser dotenv express jest jsonwebtoken mongodb-memory-server mongoose node-rest-client nodemailer nodemon path",
-    "devstart": "concurrently --kill-others \"node app.js\" "
+    "devstart": "nodemon app.js"
   },
   "keywords": [
     "nodejs",
@@ -21,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.0",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
@@ -32,5 +33,8 @@
     "nodemailer": "^6.9.2",
     "nodemon": "^2.0.22",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
   }
 }

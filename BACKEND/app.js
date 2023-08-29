@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const express = require('express')
 const User = require("./models/user.model")
 const app = express();
+const cookieParser = require("cookie-parser")
 const bcrypt = require('bcryptjs')
 const constants = require('./utils/constants')
 const path = require('path');
@@ -37,6 +38,7 @@ async function init() {
     }
 }
 
+// Connect to MongoDB
 mongoose.connect(db_url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -62,6 +64,8 @@ require('./routes/user.routes')(app)
 require('./routes/ticket.routes')(app)
 
 app.get('/', (req, res) => {
+    console.log("Cookie:", req.cookies);
+    console.log('Signed Cookies: ', req.signedCookies)
     res.status(200).sendFile(path.join(__dirname, 'index.html'));
   });
  

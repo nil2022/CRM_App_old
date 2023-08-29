@@ -2,7 +2,6 @@ const User = require("../models/user.model")
 const constants = require("../utils/constants")
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const config = require("../configs/auth.config")
 
 exports.signup = async (req, res) => {
     let userStatus
@@ -21,12 +20,14 @@ exports.signup = async (req, res) => {
     } else {
             userStatus = constants.userStatus.approved
     }
+
+    const salt = await bcrypt.genSalt(10)  //Salt generate to Hash Password
     const userObj = {
         name: req.body.name,
         userId: req.body.userId,
         email: req.body.email,
         userType: req.body.userType,
-        password: bcrypt.hashSync(req.body.password, 10),
+        password: bcrypt.hashSync(req.body.password,salt),
         userStatus: userStatus
     }
 
@@ -37,8 +38,14 @@ exports.signup = async (req, res) => {
             userId: userCreated.userId,
             email: userCreated.email,
             userType: userCreated.userType,
-            userStatus: userCreated.userStatus
+            userStatus: userCreated.userStatus,
+            createdAt: userCreated.createdAt
         }
+        console.log({
+            Message: "User Created Successfully",
+            Response: postResponse
+        });
+
         res.status(201).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -91,7 +98,7 @@ exports.signin = async (req, res) => {
         return
     }
     let token = jwt.sign({ userId : user.userId }, process.env.SECRET_KEY, {
-        expiresIn : 86400 //24 hours
+        expiresIn : "1d" //24 hours
     })
     
     const signInResponse = {
