@@ -1,11 +1,10 @@
 const jwt = require("jsonwebtoken")
 const constants = require("../utils/constants")
 const User = require("../models/user.model")
-const bodyParser = require('body-parser')
 const express = require('express')
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
 
 const verifyToken = (req, res, next) => {
@@ -55,7 +54,7 @@ const isEmailRegistered = async (req, res, next) => {
         console.log(user);
         next();  
     } else {
-        return res.status(400).send("<h2>Email already registered!</h2>");
+        return res.status(400).send("Email already registered!");
     }      
 }
 
@@ -69,7 +68,7 @@ const isUserIdRegistered = async (req, res, next) => {
         console.log(user);
         next();  
     } else {
-        return res.status(400).send("<h2>User Id already registered!</h2>");
+        return res.status(400).send("User Id already registered!");
     }      
 }
 

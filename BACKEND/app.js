@@ -1,20 +1,27 @@
+require('dotenv').config()
 const mongoose = require("mongoose")
 const express = require('express')
+const cors = require('cors')
+const logger = require('morgan')
 const User = require("./models/user.model")
 const app = express();
-const cookieParser = require("cookie-parser")
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const constants = require('./utils/constants')
 const path = require('path');
+const { DB_URL } = require('./configs/db.config')
+
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-require('dotenv').config()
-const db_url = process.env.DB_URL || 'mongodb://127.0.0.1:27017/crm_db'
+app.use(cors());
+app.use(logger('dev'))
+
+
+const db_url = DB_URL|| 'mongodb://127.0.0.1:27017/crm_db'
 const PORT = process.env.PORT || 3002
 
 //Create System User or check if already present
 async function init() {
-    let user = await User.findOne({ userId: "nil_2410" })
+    let user = await User.findOne({ userId: process.env.ADMIN_USERID })
 
     if (user) {
         console.log("Admin user already present", user)
@@ -24,11 +31,11 @@ async function init() {
 
     try {
         let user = await User.create({
-            name: "Nilanjan Haldar",
-            userId: "nil_2410",
-            email: "nil.haldar@gmail.com",
-            userType: "ADMIN",
-            password: bcrypt.hashSync("26122022", 10),
+            name: process.env.ADMIN_NAME,
+            userId: process.env.ADMIN_USERID,
+            email: process.env.ADMIN_EMAIL,
+            userType: constants.userTypes.admin,
+            password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
             userStatus: constants.userStatus.approved
         })
         console.log(user)
@@ -38,35 +45,37 @@ async function init() {
     }
 }
 
-// Connect to MongoDB
-mongoose.connect(db_url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-mongoose.set('strictQuery', true);
+// connect to MongoDB
+// Event handlers for successful connection and connection error
+const connectDB = async () => {
+    try {
+        const connect = await mongoose.connect(db_url,{
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      
+      console.log(`MongoDB Connected to Host: ${connect.connection.host}`);
+      init();
 
-const db = mongoose.connection
-db.on("error", () => console.log("Can't connect to DB"))
-db.once("open", () => {
-    console.log("\nConnected to MongoDB\n")
-    init()
-  /*  if(process.env.DB_URL1 === "mongodb://127.0.0.1:27017/crm_db") 
-    { 
-        console.log("CONNECTED TO LOCAL SERVER"); 
+    } catch (error) {
+      console.log("Can't connect to DB:", error.message);
     }
-        else console.log("Connected to MongoDB Atlas!");
-        console.log("\n");  */
-    
-})
+  }
+ mongoose.set('strictQuery', true);
+  // FIRST CONNECT TO MONGODB THEN START LISTENING TO REQUESTS
+connectDB().then(() => {
+    app.listen( PORT, () => {
+        console.log(`Listening all requests on port ${PORT}`);
+    })
+  }).catch((e)=>console.log(e)) // IF DB CONNECT FAILED, CATCH ERROR
+
+app.get('/', (req, res) => {
+  logger.error('hi')
+    res.status(200).send(`<h2>CRM Backend Running! 🎉</h2>`)
+  });
 
 require('./routes/auth.routes')(app)
 require('./routes/user.routes')(app)
 require('./routes/ticket.routes')(app)
 
-app.get('/', (req, res) => {
-    console.log("Cookie:", req.cookies);
-    console.log('Signed Cookies: ', req.signedCookies)
-    res.status(200).sendFile(path.join(__dirname, 'index.html'));
-  });
- 
-app.listen(PORT, () => console.log(`Listening at http://127.0.0.1:${PORT}`))
+

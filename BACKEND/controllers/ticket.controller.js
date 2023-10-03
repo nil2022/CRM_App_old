@@ -139,7 +139,7 @@ exports.getAllTickets = async (req, res) => {
     if(tickets.length == 0) {
         console.log("tickets is NULL, check with status");
         return res.status(401).send({
-        message :  `there is NO tickets with this status [${req.query.status}] `
+        message :  `There is NO tickets with this status [${req.query.status}]`
     })}
     res.status(200).send(objectConverter.ticketListResponse(tickets))
 }
@@ -149,9 +149,10 @@ try {
     const ticket = await Ticket.findOne({
         _id: req.params.id
     })
+    if(!ticket) throw new Error('No tickets in DB')
     res.status(200).send(objectConverter.ticketResponse(ticket))
     } catch(err) {
-    console.log("Ticket Id entered wrong, pls check --> ", err);
+    console.log("Ticket Id entered wrong, pls check --> ", err.message);
     res.status(400).send({
         message: `WRONG ticket ID!`
     })

@@ -1,6 +1,6 @@
 const User = require("../models/user.model")
 const constants = require("../utils/constants")
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 exports.signup = async (req, res) => {
@@ -46,23 +46,7 @@ exports.signup = async (req, res) => {
             Response: postResponse
         });
 
-        res.status(201).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>CRM App</title>
-        </head>
-        <body>
-            <h2>User Registered Success</h2>
-            <div>
-            <a href="http://localhost:3000/login"><b>Click to Login</b></a>
-            </div>
-        </body>
-        </html>
-        `)
+        res.status(201).send(`User Registered Success`, postResponse)
     } catch (err) {
         console.log("Something went wrong while saving to DB", err.message)
         res.status(500).send({

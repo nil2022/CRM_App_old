@@ -3,7 +3,7 @@
  * Only the user of type ADMIN should be able to perform the operations
  * defined in the User Controller
  */
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const User = require("../models/user.model")
 const ObjectConverter = require("../utils/objectConverter")
 const date = new Date();
@@ -141,7 +141,7 @@ exports.update = async (req, res) => {
     const userIdReq = req.params.userId
     try {
         const __vUpdate = await User.findOne({ userId : userIdReq }) //fetching userID record from DB to update '__v'
-        console.log(__vUpdate.__v);
+        // console.log(__vUpdate.__v);
         const user = await User.findOneAndUpdate({
             userId: userIdReq
         }, {
