@@ -16,8 +16,8 @@ app.use(cors());
 app.use(logger('dev'))
 
 
-const db_url = DB_URL|| 'mongodb://127.0.0.1:27017/crm_db'
-const PORT = process.env.PORT || 3002
+const db_url = DB_URL|| 'mongodb://127.0.0.1:27017/crm_db_old'
+const PORT = process.env.PORT || 3001
 
 //Create System User or check if already present
 async function init() {
@@ -49,10 +49,7 @@ async function init() {
 // Event handlers for successful connection and connection error
 const connectDB = async () => {
     try {
-        const connect = await mongoose.connect(db_url,{
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
+        const connect = await mongoose.connect(db_url);
       
       console.log(`MongoDB Connected to Host: ${connect.connection.host}`);
       init();
@@ -61,7 +58,7 @@ const connectDB = async () => {
       console.log("Can't connect to DB:", error.message);
     }
   }
- mongoose.set('strictQuery', true);
+mongoose.set('strictQuery', true);
   // FIRST CONNECT TO MONGODB THEN START LISTENING TO REQUESTS
 connectDB().then(() => {
     app.listen( PORT, () => {
@@ -69,13 +66,20 @@ connectDB().then(() => {
     })
   }).catch((e)=>console.log(e)) // IF DB CONNECT FAILED, CATCH ERROR
 
-app.get('/', (req, res) => {
-  logger.error('hi')
-    res.status(200).send(`<h2>CRM Backend Running! 🎉</h2>`)
+  require('./routes/auth.routes')(app)
+  require('./routes/user.routes')(app)
+  require('./routes/ticket.routes')(app)
+
+app.get('/', (_, res) => {
+  // console.log('Hi, from CRM App OLD')
+    res.status(200).json({
+      success: true,
+      message: 'CRM_App is running !',
+      route: '/',
+      statusCode: 200
+    })
   });
 
-require('./routes/auth.routes')(app)
-require('./routes/user.routes')(app)
-require('./routes/ticket.routes')(app)
+
 
 

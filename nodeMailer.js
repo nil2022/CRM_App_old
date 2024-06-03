@@ -7,15 +7,15 @@ let transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-      user: 'nil.haldar@gmail.com',
-      pass: 'pasqjaamcgpdznpf'
+      user: 'daron.wisozk@ethereal.email',
+      pass: '5OyV?8pbF_BsKB@r'
       }
 });
 const generatedPasskey = randomData.randomPasskey(8);
 console.log(generatedPasskey);
 // specify the email details
 let mailOptions = {
-  from: 'nil.haldar@gmail.com',
+  from: 'daron.wisozk@ethereal.email',
   to: 'nil.2023@yopmail.com',
   subject: 'Hello! from Node JS, Your Passkey',
   html: `<h4>This is your Passkey :</h4> 

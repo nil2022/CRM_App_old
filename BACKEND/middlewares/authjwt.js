@@ -51,10 +51,13 @@ const isEmailRegistered = async (req, res, next) => {
     })
 
     if(!user) {
-        console.log(user);
         next();  
     } else {
-        return res.status(400).send("Email already registered!");
+        return res.status(400).json({
+            success: false,
+            message: "Email Id already registered!",
+            statusCode: 400
+        });
     }      
 }
 
@@ -65,7 +68,6 @@ const isUserIdRegistered = async (req, res, next) => {
     })
 
     if(!user) {
-        console.log(user);
         next();  
     } else {
         return res.status(400).send("User Id already registered!");
